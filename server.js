@@ -17,7 +17,7 @@ function request(cReq, cRes) {
     var u = url.parse(cReq.url);
 
     if (u.path === "/") {
-        load(cReq, (body) => {
+        load(cReq, body => {
             decode(body, C_PKEY, S_SKEY, (decoded_body, code) => {
                 if (code != 0) {
                     console.log("auth failed in decoding: " + code);
@@ -29,22 +29,23 @@ function request(cReq, cRes) {
                 delete options.data;
 
                 var pReq = http
-                    .request(options, (pRes) => {
+                    .request(options, pRes => {
                         cRes.writeHead(pRes.statusCode, pRes.headers);
-
-                        load(pRes, (ret) => {
-                            encode(ret, C_PKEY, S_SKEY, (encoded_ret, code) => {
-                                if (code != 0) {
-                                    console.log("encoding failed: " + code);
-                                    cRes.end("encoding failed: " + code);
-                                    return;
-                                }
-                                cRes.write(encoded_ret);
-                                cRes.end();
-                            });
+                        load(pRes, ret => {
+                            // encode(ret, C_PKEY, S_SKEY, (encoded_ret, code) => {
+                            //     if (code != 0) {
+                            //         console.log("encoding failed: " + code);
+                            //         cRes.end("encoding failed: " + code);
+                            //         return;
+                            //     }
+                            //     cRes.write(encoded_ret);
+                            //     cRes.end();
+                            // });
+                            cRes.write(ret);
+                            cRes.end();
                         });
                     })
-                    .on("error", (e) => {
+                    .on("error", e => {
                         cRes.end();
                     })
                     .end(data);
@@ -53,4 +54,6 @@ function request(cReq, cRes) {
     }
 }
 
-http.createServer().on("request", request).listen(8080, "0.0.0.0");
+http.createServer()
+    .on("request", request)
+    .listen(8080, "0.0.0.0");

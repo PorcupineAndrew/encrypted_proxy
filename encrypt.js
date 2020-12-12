@@ -55,9 +55,9 @@ module.exports = {
         var data = "";
         ctx.on("data", d => {
             data += d;
-            if (data.length > 1e7) {
-                ctx.end("Error 413");
-            }
+            // if (data.length > 1e7) {
+            //     ctx.end("Error 413");
+            // }
         });
         ctx.on("end", () => {
             callback(data);

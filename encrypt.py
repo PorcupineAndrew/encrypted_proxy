@@ -135,7 +135,7 @@ def decode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = decrypt(strb, skey[0], skey[1])
     if  strcb[-10:] != b'hello bro!':
-        # sys.stderr.write("exit 1")
+        sys.stderr.write("exit 2")
         exit(2)
     strret = decrypt(strcb[:-10], pkey[0], pkey[1])
     strret = strret.decode(encoding="latin1")
