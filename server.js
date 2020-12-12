@@ -1,6 +1,7 @@
-var http = require("http");
-var net = require("net");
-var url = require("url");
+const http = require("http");
+const net = require("net");
+const url = require("url");
+const { spawn, spawnSync } = require("child_process");
 
 function request(cReq, cRes) {
     if (cReq.method === "GET") {
@@ -12,10 +13,10 @@ function request(cReq, cRes) {
     var u = url.parse(cReq.url);
 
     if (u.path === "/") {
-        var reqbody = "";
+        var body = "";
         cReq.on("data", (d) => {
-            reqbody += d;
-            if (reqbody.length > 1500) {
+            body += d;
+            if (body.length > 1500) {
                 cRes.writeHead(413, "Request Entity Too Large", {
                     "Content-Type": "text/html",
                 });
@@ -24,19 +25,41 @@ function request(cReq, cRes) {
         });
 
         cReq.on("end", () => {
-            var options = JSON.parse(reqbody);
-            console.log("request to: " + options["hostname"]);
+            var decoded_body = "";
+            var de = spawn("./encrypt.py", [
+                "-t",
+                "decode",
+                "-i",
+                body,
+                "-k",
+                "123",
+            ]);
 
-            var pReq = http
-                .request(options, (pRes) => {
-                    cRes.writeHead(pRes.statusCode, pRes.headers);
-                    pRes.pipe(cRes);
-                })
-                .on("error", (e) => {
-                    cRes.end();
-                });
+            de.stdout.on("data", (d) => {
+                decoded_body += d;
+            });
 
-            cReq.pipe(pReq);
+            de.on("close", (code) => {
+                if (code !== 0) {
+                    cRes.end("INTERNAL ERROR");
+                    return;
+                }
+                console.log("decoded: " + decoded_body);
+
+                var options = JSON.parse(decoded_body);
+                console.log("request to: " + options["hostname"]);
+
+                var pReq = http
+                    .request(options, (pRes) => {
+                        cRes.writeHead(pRes.statusCode, pRes.headers);
+                        pRes.pipe(cRes);
+                    })
+                    .on("error", (e) => {
+                        cRes.end();
+                    });
+
+                cReq.pipe(pReq);
+            });
         });
     }
 }
