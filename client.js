@@ -47,7 +47,7 @@ function request(cReq, cRes) {
             }
             var pReq = http
                 .request(server_options("/", encoded_body), pRes => {
-                    cRes.writeHead(pRes.statusCode, pRes.headers);
+                    // cRes.writeHead(pRes.statusCode, pRes.headers);
                     load(pRes, ret => {
                         console.log(ret.length);
                         // decode(ret, S_PKEY, C_SKEY, (decoded_ret, code) => {

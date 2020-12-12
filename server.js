@@ -41,7 +41,7 @@ function request(cReq, cRes) {
                             //     cRes.write(encoded_ret);
                             //     cRes.end();
                             // });
-                            cRes.write(encoded_ret);
+                            cRes.write(ret);
                             cRes.end();
                         });
                     })
