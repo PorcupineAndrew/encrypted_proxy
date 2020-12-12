@@ -22,7 +22,7 @@ def dummy_decode(input_string, pkey, skey):
 @click.option("--input-string", "-i", type=str, required=True, help="input string")
 @click.option("--pkey", "-p", type=int, required=True, help="public key")
 @click.option("--skey", "-s", type=int, required=True, help="secret key")
-def main(task, input_string, key):
+def main(task, input_string, pkey, skey):
     output_string = methods()[task](input_string, pkey, skey)
     sys.stdout.write(output_string)
 

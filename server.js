@@ -20,8 +20,8 @@ function request(cReq, cRes) {
         load(cReq, (body) => {
             decode(body, C_PKEY, S_SKEY, (decoded_body, code) => {
                 if (code != 0) {
-                    console.log("auth failed in decoding" + code);
-                    cRes.end("auth failed in decoding" + code);
+                    console.log("auth failed in decoding: " + code);
+                    cRes.end("auth failed in decoding: " + code);
                     return;
                 }
                 var options = JSON.parse(decoded_body);
@@ -35,8 +35,8 @@ function request(cReq, cRes) {
                         load(pRes, (ret) => {
                             encode(ret, C_PKEY, S_SKEY, (encoded_ret, code) => {
                                 if (code != 0) {
-                                    console.log("encoding failed" + code);
-                                    cRes.end("encoding failed" + code);
+                                    console.log("encoding failed: " + code);
+                                    cRes.end("encoding failed: " + code);
                                     return;
                                 }
                                 cRes.write(encoded_ret);
