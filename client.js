@@ -24,35 +24,38 @@ function server_options(path, body) {
 function request(cReq, cRes) {
     var u = url.parse(cReq.url);
 
-    var target_options = {
-        hostname: u.hostname,
-        port: u.port || 80,
-        path: u.path,
-        method: cReq.method,
-        headers: cReq.headers,
-        data: data,
-    };
+    load(cReq, (data) => {
+        var target_options = {
+            hostname: u.hostname,
+            port: u.port || 80,
+            path: u.path,
+            method: cReq.method,
+            headers: cReq.headers,
+            data: data,
+        };
 
-    var body = JSON.stringify(target_options);
+        var body = JSON.stringify(target_options);
 
-    encode(body, (encoded_body) => {
-        var pReq = http
-            .request(server_options("/", encoded_body), (pRes) => {
-                cRes.writeHead(pRes.statusCode, pRes.headers);
+        encode(body, (encoded_body) => {
+            var pReq = http
+                .request(server_options("/", encoded_body), (pRes) => {
+                    cRes.writeHead(pRes.statusCode, pRes.headers);
 
-                load(pRes, (ret) => {
-                    decode(ret, (decoded_ret) => {
-                        cRes.write(decoded_ret);
-                        cRes.end();
+                    load(pRes, (ret) => {
+                        decode(ret, (decoded_ret) => {
+                            cRes.write(decoded_ret);
+                            cRes.end();
+                        });
                     });
-                });
-            })
-            .on("error", (e) => {
-                cRes.end();
-            })
-            .end(encoded_body);
+                })
+                .on("error", (e) => {
+                    cRes.end();
+                })
+                .end(encoded_body);
 
-        cReq.pipe(pReq);
+            pReq.write(encoded_body);
+            // cReq.pipe(pReq);
+        });
     });
 }
 

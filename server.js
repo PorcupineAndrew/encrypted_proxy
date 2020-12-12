@@ -14,20 +14,11 @@ function request(cReq, cRes) {
     var u = url.parse(cReq.url);
 
     if (u.path === "/") {
-        var body = "";
-        cReq.on("data", (d) => {
-            body += d;
-            if (body.length > 1500) {
-                cRes.writeHead(413, "Request Entity Too Large", {
-                    "Content-Type": "text/html",
-                });
-                cRes.end("Error 413");
-            }
-        });
-
-        cReq.on("end", () => {
+        load(cReq, (body) => {
             decode(body, (decoded_body) => {
                 var options = JSON.parse(decoded_body);
+                var data = options.data;
+                delete options.data;
 
                 var pReq = http
                     .request(options, (pRes) => {
@@ -44,7 +35,8 @@ function request(cReq, cRes) {
                         cRes.end();
                     });
 
-                cReq.pipe(pReq);
+                pReq.write(data);
+                // cReq.pipe(pReq);
             });
         });
     }
