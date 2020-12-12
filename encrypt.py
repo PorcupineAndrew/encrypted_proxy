@@ -141,32 +141,39 @@ def decrypt(strb, d, n):
 def encode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = encrypt(strb, skey[0], skey[1])
+    print(f"1 strcb {strcb}")
     strret = encrypt(strcb+b'hello bro!', pkey[0], pkey[1])
     strret = strret.decode(encoding="latin1")
-    sys.stderr.write(strret)
+    # sys.stderr.write(strret)
     return strret
 
 def decode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = decrypt(strb, skey[0], skey[1])
+    print(f"2 strcb {strcb}")
     if  strcb[-10:] != b'hello bro!':
-        exit(0)
+        sys.stderr.write("exit 1")
+        exit(1)
     strret = decrypt(strcb[:-10], pkey[0], pkey[1])
     strret = strret.decode(encoding="latin1")
-    sys.stderr.write(strret)
+    # sys.stderr.write(strret)
     return strret
 
 
-@click.command()
-@click.option("--task", "-t", type=click.Choice(["encode", "decode"]), required=True, help="encode or decode")
-@click.option("--input-string", "-i", type=str, required=True, help="input string")
-@click.option("--pkey", "-p", type=str, required=True, help="public key")
-@click.option("--skey", "-s", type=str, required=True, help="secret key")
-def main(task, input_string, pkey, skey):
-    pkey = list(map(int, pkey.strip().split(" ")))
-    skey = list(map(int, skey.strip().split(" ")))
-    output_string = methods()[task](input_string, pkey, skey)
-    sys.stdout.write(output_string)
+# @click.command()
+# @click.option("--task", "-t", type=click.Choice(["encode", "decode"]), required=True, help="encode or decode")
+# @click.option("--input-string", "-i", type=str, required=True, help="input string")
+# @click.option("--pkey", "-p", type=str, required=True, help="public key")
+# @click.option("--skey", "-s", type=str, required=True, help="secret key")
+# def main(task, input_string, pkey, skey):
+#     pkey = list(map(int, pkey.strip().split(" ")))
+#     skey = list(map(int, skey.strip().split(" ")))
+#     output_string = methods()[task](input_string, pkey, skey)
+#     sys.stdout.write(output_string)
 
 if __name__ == "__main__":
-    main()
+    # main()
+    import json
+    en = encode("hello world", [7, 33], [7, 33])
+    print(decode(en, [3, 33], [3, 33]))
+
