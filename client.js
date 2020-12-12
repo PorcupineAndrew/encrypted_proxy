@@ -7,6 +7,9 @@ const { load, encode, decode } = require("./encrypt.js");
 const PROXY_SERVER = "101.200.152.10";
 const PROXY_PORT = 8080;
 
+const C_SKEY = 123; // client secret key
+const S_PKEY = 123; // server public key
+
 function server_options(path, body) {
     var server_options = {
         hostname: PROXY_SERVER,
@@ -36,13 +39,23 @@ function request(cReq, cRes) {
 
         var body = JSON.stringify(target_options);
 
-        encode(body, (encoded_body) => {
+        encode(body, S_PKEY, C_SKEY, (encoded_body, code) => {
+            if (code != 0) {
+                console.log("encoding failed");
+                cRes.end("encoding failed");
+                return;
+            }
             var pReq = http
                 .request(server_options("/", encoded_body), (pRes) => {
                     cRes.writeHead(pRes.statusCode, pRes.headers);
 
                     load(pRes, (ret) => {
-                        decode(ret, (decoded_ret) => {
+                        decode(ret, S_PKEY, C_SKEY, (decoded_ret, code) => {
+                            if (code != 0) {
+                                console.log("auth failed in decoding");
+                                cRes.end("auth failed in decoding");
+                                return;
+                            }
                             cRes.write(decoded_ret);
                             cRes.end();
                         });
@@ -52,9 +65,6 @@ function request(cReq, cRes) {
                     cRes.end();
                 })
                 .end(encoded_body);
-
-            // pReq.write(encoded_body);
-            // cReq.pipe(pReq);
         });
     });
 }

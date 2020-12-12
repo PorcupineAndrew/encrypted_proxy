@@ -4,6 +4,9 @@ const url = require("url");
 
 const { load, encode, decode } = require("./encrypt.js");
 
+const C_PKEY = 123; // client public key
+const S_SKEY = 123; // server secret key
+
 function request(cReq, cRes) {
     if (cReq.method === "GET") {
         cRes.writeHead(404);
@@ -15,7 +18,12 @@ function request(cReq, cRes) {
 
     if (u.path === "/") {
         load(cReq, (body) => {
-            decode(body, (decoded_body) => {
+            decode(body, C_PKEY, S_SKEY, (decoded_body, code) => {
+                if (code != 0) {
+                    console.log("auth failed in decoding");
+                    cRes.end("auth failed in decoding");
+                    return;
+                }
                 var options = JSON.parse(decoded_body);
                 var data = options.data;
                 delete options.data;
@@ -25,7 +33,12 @@ function request(cReq, cRes) {
                         cRes.writeHead(pRes.statusCode, pRes.headers);
 
                         load(pRes, (ret) => {
-                            encode(ret, (encoded_ret) => {
+                            encode(ret, C_PKEY, S_SKEY, (encoded_ret, code) => {
+                                if (code != 0) {
+                                    console.log("encoding failed");
+                                    cRes.end("encoding failed");
+                                    return;
+                                }
                                 cRes.write(encoded_ret);
                                 cRes.end();
                             });
@@ -35,9 +48,6 @@ function request(cReq, cRes) {
                         cRes.end();
                     })
                     .end(data);
-
-                // pReq.write(data);
-                // cReq.pipe(pReq);
             });
         });
     }

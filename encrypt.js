@@ -1,15 +1,17 @@
 const { spawn, spawnSync } = require("child_process");
 
 module.exports = {
-    encode: function (body, call_back) {
+    encode: function (body, pkey, skey, call_back) {
         var encoded_body = "";
         var en = spawn("./encrypt.py", [
             "-t",
             "encode",
             "-i",
             body,
-            "-k",
-            "123",
+            "-p",
+            pkey,
+            "-s",
+            skey,
         ]);
 
         en.stdout.on("data", (d) => {
@@ -17,24 +19,21 @@ module.exports = {
         });
 
         en.on("close", (code) => {
-            if (code !== 0) {
-                cRes.end("internal error");
-                return;
-            }
-            // console.log("encoded: " + encoded_body);
-            call_back(encoded_body);
+            call_back(encoded_body, code);
         });
     },
 
-    decode: function (body, call_back) {
+    decode: function (body, pkey, skey, call_back) {
         var decoded_body = "";
         var de = spawn("./encrypt.py", [
             "-t",
             "decode",
             "-i",
             body,
-            "-k",
-            "123",
+            "-p",
+            pkey,
+            "-s",
+            skey,
         ]);
 
         de.stdout.on("data", (d) => {
@@ -42,12 +41,7 @@ module.exports = {
         });
 
         de.on("close", (code) => {
-            if (code !== 0) {
-                cRes.end("internal error");
-                return;
-            }
-            // console.log("decoded: " + decoded_body);
-            call_back(decoded_body);
+            call_back(decoded_body, code);
         });
     },
 
