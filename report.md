@@ -37,6 +37,16 @@ RSA算法的具体描述如下：
 
 然而只根据n和e（注意：不是p和q）要计算出d是不可能的。因此，任何人都可对明文进行加密，但只有授权用户（知道d）才可对密文解密
 
+### 2.2代理服务协议
+
+Web 代理是一种存在于网络中间的实体，提供各式各样的功能。我们的代理扮演的是「中间人」角色，对于连接到它的客户端来说，它是服务端；对于要连接的服务端来说，它是客户端。它就负责在两端之间来回传送 HTTP 报文。
+
+![img](https://img-blog.csdnimg.cn/2019042511255890.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3lldHVnZW5n,size_16,color_FFFFFF,t_70)
+
+我们在代理和客户端的传输中进行了加密和认证。
+
+“只要我们把代理服务器部署在海外，它就是一个合格的VPN”豪哥如是说
+
 ## 三、具体实现
 
 ### 3.1密钥生成
