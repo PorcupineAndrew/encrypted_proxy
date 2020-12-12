@@ -33,9 +33,10 @@ function request(cReq, cRes) {
                     })
                     .on("error", (e) => {
                         cRes.end();
-                    });
+                    })
+                    .end(data);
 
-                pReq.write(data);
+                // pReq.write(data);
                 // cReq.pipe(pReq);
             });
         });

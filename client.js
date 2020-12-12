@@ -53,7 +53,7 @@ function request(cReq, cRes) {
                 })
                 .end(encoded_body);
 
-            pReq.write(encoded_body);
+            // pReq.write(encoded_body);
             // cReq.pipe(pReq);
         });
     });
