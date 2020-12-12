@@ -18,6 +18,10 @@ module.exports = {
             encoded_body += d;
         });
 
+        en.stderr.on("data", (d) => {
+            console.log(d);
+        });
+
         en.on("close", (code) => {
             call_back(encoded_body, code);
         });
@@ -38,6 +42,10 @@ module.exports = {
 
         de.stdout.on("data", (d) => {
             decoded_body += d;
+        });
+
+        de.stderr.on("data", (d) => {
+            console.log(d);
         });
 
         de.on("close", (code) => {

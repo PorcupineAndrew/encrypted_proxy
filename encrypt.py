@@ -141,14 +141,14 @@ def decrypt(strb, d, n):
 def encode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = encrypt(strb, skey[0], skey[1])
-    print(strcb)
+    sys.stderr.write(str(strcb) + "\n")
     strret = encrypt(strcb+b'hello bro!', pkey[0], pkey[1])
     return strret
 
 def decode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = decrypt(strb, skey[0], skey[1])
-    print(strcb)
+    sys.stderr.write(str(strcb) + "\n")
     if  strcb[-10:] != b'hello bro!':
         exit(0)
     strret = decrypt(strcb[:-10], pkey[0], pkey[1])
