@@ -35,7 +35,7 @@ function request(cReq, cRes) {
     var body = JSON.stringify(target_options);
     console.log("request to proxy server: " + body);
 
-    encode(body, (decoded_body) => {
+    encode(body, (encoded_body) => {
         var pReq = http
             .request(server_options("/", encoded_body), (pRes) => {
                 cRes.writeHead(pRes.statusCode, pRes.headers);
