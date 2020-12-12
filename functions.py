@@ -78,6 +78,6 @@ def produceprime(n):
             #print(i)
             ans.append(i)
             count += 1
-    print(count)
+    # print(count)
     return ans
 

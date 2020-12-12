@@ -29,8 +29,8 @@ def producekey(k):
         e = functions.modinverse(fin, d)
         if e != -1:
             l = False
-    print(d, e, n)
-    #print((d * e) % fin)
+    # print(d, e, n)
+    # print((d * e) % fin)
     return d, e, n
 
 d, e, n = producekey(60)

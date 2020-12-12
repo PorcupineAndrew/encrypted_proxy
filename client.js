@@ -7,8 +7,8 @@ const { load, encode, decode } = require("./encrypt.js");
 const PROXY_SERVER = "101.200.152.10";
 const PROXY_PORT = 8080;
 
-const C_SKEY = "123"; // client secret key
-const S_PKEY = "123"; // server public key
+const C_SKEY = "3 33"; // client secret key
+const S_PKEY = "3 33"; // server public key
 
 function server_options(path, body) {
     var server_options = {

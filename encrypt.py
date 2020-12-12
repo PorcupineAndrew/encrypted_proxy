@@ -8,8 +8,8 @@ import functions
 
 def methods(): # NOTE
     return {
-        "encode": dummy_encode,
-        "decode": dummy_decode,
+        "encode": encode,
+        "decode": decode,
     }
 
 def encrypt(strb, d, n):
@@ -138,14 +138,14 @@ def decrypt(strb, d, n):
         ans = ans[:-2]
     return bytes(ans, encoding='latin1')
 
-def dummy_encode(input_string, pkey, skey):
+def encode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = encrypt(strb, skey[0], skey[1])
     print(strcb)
     strret = encrypt(strcb+b'hello bro!', pkey[0], pkey[1])
     return strret
 
-def dummy_decode(input_string, pkey, skey):
+def decode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = decrypt(strb, skey[0], skey[1])
     print(strcb)
@@ -158,9 +158,11 @@ def dummy_decode(input_string, pkey, skey):
 @click.command()
 @click.option("--task", "-t", type=click.Choice(["encode", "decode"]), required=True, help="encode or decode")
 @click.option("--input-string", "-i", type=str, required=True, help="input string")
-@click.option("--pkey", "-p", type=int, required=True, help="public key")
-@click.option("--skey", "-s", type=int, required=True, help="secret key")
+@click.option("--pkey", "-p", type=str, required=True, help="public key")
+@click.option("--skey", "-s", type=str, required=True, help="secret key")
 def main(task, input_string, pkey, skey):
+    pkey = list(map(int, pkey.strip().split(" ")))
+    skey = list(map(int, skey.strip().split(" ")))
     output_string = methods()[task](input_string, pkey, skey)
     sys.stdout.write(output_string)
 

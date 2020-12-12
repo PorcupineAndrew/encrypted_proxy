@@ -4,8 +4,8 @@ const url = require("url");
 
 const { load, encode, decode } = require("./encrypt.js");
 
-const C_PKEY = "123"; // client public key
-const S_SKEY = "123"; // server secret key
+const C_PKEY = "7 33"; // client public key
+const S_SKEY = "7 33"; // server secret key
 
 function request(cReq, cRes) {
     if (cReq.method === "GET") {
