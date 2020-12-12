@@ -135,7 +135,7 @@ def decrypt(strb, d, n):
         #print(s[i:i+8], int(ss, 2))
         ans += (chr(int(ss, 2)))
     while ans[-1] == '\0':
-        ans = ans[:-2]
+        ans = ans[:-1]
     return bytes(ans, encoding='latin1')
 
 def encode(input_string, pkey, skey):
