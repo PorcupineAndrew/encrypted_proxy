@@ -142,7 +142,8 @@ def encode(input_string, pkey, skey):
     strb = bytes(input_string, encoding='latin1')
     strcb = encrypt(strb, skey[0], skey[1])
     strret = encrypt(strcb+b'hello bro!', pkey[0], pkey[1])
-    sys.stderr.write(strret.decode() + "\n")
+    strret = strret.decode(encoding="latin1")
+    sys.stderr.write(strret)
     return strret
 
 def decode(input_string, pkey, skey):
@@ -151,7 +152,8 @@ def decode(input_string, pkey, skey):
     if  strcb[-10:] != b'hello bro!':
         exit(0)
     strret = decrypt(strcb[:-10], pkey[0], pkey[1])
-    sys.stderr.write(strret.decode() + "\n")
+    strret = strret.decode(encoding="latin1")
+    sys.stderr.write(strret)
     return strret
 
 

@@ -19,7 +19,7 @@ module.exports = {
         });
 
         en.stderr.on("data", (d) => {
-            console.log(d);
+            console.log(d.toString());
         });
 
         en.on("close", (code) => {
@@ -45,7 +45,7 @@ module.exports = {
         });
 
         de.stderr.on("data", (d) => {
-            console.log(d);
+            console.log(d.toString());
         });
 
         de.on("close", (code) => {
