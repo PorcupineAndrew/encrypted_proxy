@@ -40,11 +40,6 @@ function request(cReq, cRes) {
         var body = JSON.stringify(target_options);
 
         encode(body, S_PKEY, C_SKEY, (encoded_body, code) => {
-            // decode(encoded_body, "7 33", "7 33", (decoded_body, code) => {
-            //     console.log("code: " + code);
-            //     console.log("decode: " + decoded_body.toString());
-            //     console.log("decode: " + decoded_body.length);
-            // });
             if (code != 0) {
                 console.log("encoding failed: " + code);
                 cRes.end("encoding failed: " + code);
@@ -53,17 +48,25 @@ function request(cReq, cRes) {
             var pReq = http
                 .request(server_options("/", encoded_body), pRes => {
                     cRes.writeHead(pRes.statusCode, pRes.headers);
-
                     load(pRes, ret => {
-                        decode(ret, S_PKEY, C_SKEY, (decoded_ret, code) => {
-                            if (code != 0) {
-                                console.log("auth failed in decoding: " + code);
-                                cRes.end("auth failed in decoding: " + code);
-                                return;
-                            }
-                            cRes.write(decoded_ret);
-                            cRes.end();
-                        });
+                        console.log(ret.length);
+                        // decode(ret, S_PKEY, C_SKEY, (decoded_ret, code) => {
+                        //     cRes.writeHead(pRes.statusCode, pRes.headers);
+                        //     if (code != 0) {
+                        //         console.log(
+                        //             "here auth failed in decoding: " + code
+                        //         );
+                        //         return;
+                        //     }
+                        //     cRes.writeHead(pRes.statusCode, {
+                        //         "Content-Type": "application/json",
+                        //         "Content-Length": decoded_ret.length
+                        //     });
+                        //     cRes.write(JSON.stringfy({ data: decoded_ret }));
+                        //     cRes.end();
+                        // });
+                        cRes.write(ret);
+                        cRes.end();
                     });
                 })
                 .on("error", e => {
