@@ -2,7 +2,7 @@ const http = require("http");
 const net = require("net");
 const url = require("url");
 
-const { encode, decode } = require("./encrypt.js");
+const { load, encode, decode } = require("./encrypt.js");
 
 function request(cReq, cRes) {
     if (cReq.method === "GET") {
@@ -28,19 +28,12 @@ function request(cReq, cRes) {
         cReq.on("end", () => {
             decode(body, (decoded_body) => {
                 var options = JSON.parse(decoded_body);
-                console.log("request to: " + options["hostname"]);
 
                 var pReq = http
                     .request(options, (pRes) => {
                         cRes.writeHead(pRes.statusCode, pRes.headers);
-                        // pRes.pipe(cRes);
-                        let ret = "";
 
-                        pRes.on("data", (d) => {
-                            ret += d;
-                        });
-
-                        pRes.on("end", () => {
+                        load(pRes, (ret) => {
                             encode(ret, (encoded_ret) => {
                                 cRes.write(encoded_ret);
                                 cRes.end();

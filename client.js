@@ -2,7 +2,7 @@ const http = require("http");
 const net = require("net");
 const url = require("url");
 
-const { encode, decode } = require("./encrypt.js");
+const { load, encode, decode } = require("./encrypt.js");
 
 const PROXY_SERVER = "101.200.152.10";
 const PROXY_PORT = 8080;
@@ -30,24 +30,17 @@ function request(cReq, cRes) {
         path: u.path,
         method: cReq.method,
         headers: cReq.headers,
+        data: data,
     };
 
     var body = JSON.stringify(target_options);
-    console.log("request to proxy server: " + body);
 
     encode(body, (encoded_body) => {
         var pReq = http
             .request(server_options("/", encoded_body), (pRes) => {
                 cRes.writeHead(pRes.statusCode, pRes.headers);
-                // pRes.pipe(cRes);
-                let ret = "";
 
-                pRes.on("data", (d) => {
-                    ret += d;
-                });
-
-                pRes.on("end", () => {
-                    console.log("get ret: " + ret);
+                load(pRes, (ret) => {
                     decode(ret, (decoded_ret) => {
                         cRes.write(decoded_ret);
                         cRes.end();

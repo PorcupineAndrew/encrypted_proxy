@@ -21,10 +21,11 @@ module.exports = {
                 cRes.end("internal error");
                 return;
             }
-            console.log("encoded: " + encoded_body);
+            // console.log("encoded: " + encoded_body);
             call_back(encoded_body);
         });
     },
+
     decode: function (body, call_back) {
         var decoded_body = "";
         var de = spawn("./encrypt.py", [
@@ -45,8 +46,18 @@ module.exports = {
                 cRes.end("internal error");
                 return;
             }
-            console.log("decoded: " + decoded_body);
+            // console.log("decoded: " + decoded_body);
             call_back(decoded_body);
+        });
+    },
+
+    load: function (ctx, callback) {
+        var data = "";
+        ctx.on("data", (d) => {
+            data += d;
+        });
+        ctx.on("end", () => {
+            callback(data);
         });
     },
 };
