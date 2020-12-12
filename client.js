@@ -18,8 +18,8 @@ function server_options(path, body) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Content-Length": Buffer.byteLength(body),
-        },
+            "Content-Length": Buffer.byteLength(body)
+        }
     };
     return server_options;
 }
@@ -27,29 +27,34 @@ function server_options(path, body) {
 function request(cReq, cRes) {
     var u = url.parse(cReq.url);
 
-    load(cReq, (data) => {
+    load(cReq, data => {
         var target_options = {
             hostname: u.hostname,
             port: u.port || 80,
             path: u.path,
             method: cReq.method,
             headers: cReq.headers,
-            data: data,
+            data: data
         };
 
         var body = JSON.stringify(target_options);
 
         encode(body, S_PKEY, C_SKEY, (encoded_body, code) => {
+            // decode(encoded_body, "7 33", "7 33", (decoded_body, code) => {
+            //     console.log("code: " + code);
+            //     console.log("decode: " + decoded_body.toString());
+            //     console.log("decode: " + decoded_body.length);
+            // });
             if (code != 0) {
                 console.log("encoding failed: " + code);
                 cRes.end("encoding failed: " + code);
                 return;
             }
             var pReq = http
-                .request(server_options("/", encoded_body), (pRes) => {
+                .request(server_options("/", encoded_body), pRes => {
                     cRes.writeHead(pRes.statusCode, pRes.headers);
 
-                    load(pRes, (ret) => {
+                    load(pRes, ret => {
                         decode(ret, S_PKEY, C_SKEY, (decoded_ret, code) => {
                             if (code != 0) {
                                 console.log("auth failed in decoding: " + code);
@@ -61,7 +66,7 @@ function request(cReq, cRes) {
                         });
                     });
                 })
-                .on("error", (e) => {
+                .on("error", e => {
                     cRes.end();
                 })
                 .end(encoded_body);
@@ -69,4 +74,6 @@ function request(cReq, cRes) {
     });
 }
 
-http.createServer().on("request", request).listen(8888, "127.0.0.1");
+http.createServer()
+    .on("request", request)
+    .listen(8888, "127.0.0.1");
