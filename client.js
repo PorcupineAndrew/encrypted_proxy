@@ -1,7 +1,8 @@
 const http = require("http");
 const net = require("net");
 const url = require("url");
-const { spawn, spawnSync } = require("child_process");
+
+const { encode } = require("./encrypt.js");
 
 const PROXY_SERVER = "101.200.152.10";
 const PROXY_PORT = 8080;
@@ -34,22 +35,7 @@ function request(cReq, cRes) {
     var body = JSON.stringify(target_options);
     console.log("request to proxy server: " + body);
 
-    // encode body
-    var encoded_body = "";
-    var en = spawn("./encrypt.py", ["-t", "encode", "-i", body, "-k", "123"]);
-
-    en.stdout.on("data", (d) => {
-        encoded_body += d;
-    });
-
-    en.on("close", (code) => {
-        if (code !== 0) {
-            cRes.end("INTERNAL ERROR");
-            return;
-        }
-        console.log("encoded: " + encoded_body);
-
-        // post to proxy server
+    encode(body, (decoded_body) => {
         var pReq = http
             .request(server_options("/", encoded_body), (pRes) => {
                 cRes.writeHead(pRes.statusCode, pRes.headers);

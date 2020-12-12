@@ -1,7 +1,8 @@
 const http = require("http");
 const net = require("net");
 const url = require("url");
-const { spawn, spawnSync } = require("child_process");
+
+const { decode } = require("./encrypt.js");
 
 function request(cReq, cRes) {
     if (cReq.method === "GET") {
@@ -25,27 +26,7 @@ function request(cReq, cRes) {
         });
 
         cReq.on("end", () => {
-            var decoded_body = "";
-            var de = spawn("./encrypt.py", [
-                "-t",
-                "decode",
-                "-i",
-                body,
-                "-k",
-                "123",
-            ]);
-
-            de.stdout.on("data", (d) => {
-                decoded_body += d;
-            });
-
-            de.on("close", (code) => {
-                if (code !== 0) {
-                    cRes.end("INTERNAL ERROR");
-                    return;
-                }
-                console.log("decoded: " + decoded_body);
-
+            decode(body, (decoded_body) => {
                 var options = JSON.parse(decoded_body);
                 console.log("request to: " + options["hostname"]);
 
